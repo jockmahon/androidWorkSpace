@@ -1,0 +1,42 @@
+Outstanding
+
+1) 1+(+3 causes an error
+2) 
+3) 
+4) style action bar
+5) add error checking
+6) 
+7) 
+8) 
+
+ 
+1) MAYBE - Edit user equations
+
+
+
+Done
+can press "." more than once and causes an error
+add animation for text change
+do video for play store
+prepare play store content
+Do numbers reverse layout
+Allow user to set preference for layout of numbers
+Add a remove last entry button
+Save user equations
+Fix error when in equation mode and you press equals without replacing the ? placeholder with a value
+Delete user equations
+Display user equations
+on back click removes space before op
+make up button a action bar element
+add long click on clr to remove all, default behaviour is remove last
+come up with name
+on clear click on result reverts back to float format
+Do better graphics for the buttons
+open save equation and then open equation and layout stays the same
+toast on delete equation
+save an equation without a ? and it throws an error
+open save and equation and then go to save and ops still disabled
+open or delete save equation with none throws error
+do app icon
+bracket with no op before creates infinite loop
+empty brackets cause infinate loop

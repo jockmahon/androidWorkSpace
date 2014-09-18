@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="width_note_btn">104dp</dimen>
+    <dimen name="height_note_btn">200dp</dimen>
+    <dimen name="width_sharp_note_btn">84dp</dimen>
+    <dimen name="height_sharp_note_btn">100dp</dimen>
+
+    <integer name="x_note_img">545</integer>
+    
+</resources>

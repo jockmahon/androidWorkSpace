@@ -1,0 +1,9 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="note_btn_width">104dp</dimen>
+    <dimen name="note_btn_height">200dp</dimen>
+    <dimen name="sharp_note_btn_width">84dp</dimen>
+    <dimen name="sharp_note_btn_height">100dp</dimen>
+
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Notable</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="staff">Staff</string>
+    <string name="include_sharps">Include Sharps</string>
+    <string name="include_flats">Include Flats</string>
+
+</resources>

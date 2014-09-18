@@ -1,0 +1,606 @@
+package com.jock.noteable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import android.app.Fragment;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+
+public class StaffDisplay extends Fragment implements OnClickListener, OnTouchListener
+{
+	private Button a_btn;
+	private Button b_btn;
+	private Button c_btn;
+	private Button d_btn;
+	private Button e_btn;
+	private Button f_btn;
+	private Button g_btn;
+
+	private Button c_sharp_btn;
+	private Button d_sharp_btn;
+	private Button f_sharp_btn;
+	private Button g_sharp_btn;
+	private Button a_sharp_btn;
+
+	private ListView lv_history;
+	private RelativeLayout staffLayout;
+
+	private enum NOTES
+	{
+		C_NATURAL, D_NATURAL, E_NATURAL, F_NATURAL, G_NATURAL, A_NATURAL, B_NATURAL, C_SHARP, D_SHARP, F_SHARP, G_SHARP, A_SHARP, D_FLAT, E_FLAT, G_FLAT, A_FLAT, B_FLAT, B_SHARP, E_SHARP, C_FLAT, F_FLAT
+	};
+
+	private enum NOTE_TYPE
+	{
+		NATURAL, SHARP, FLAT
+	};
+
+	private static final List<NOTES> VALUES = Collections.unmodifiableList( Arrays.asList( NOTES.values() ) );
+	private static final int size = VALUES.size();
+
+	Map<NOTES, Integer> record = new HashMap<NOTES, Integer>();
+
+	private Random rand = new Random();
+	private NOTES currentNote = NOTES.C_NATURAL;
+	private static final int ON_TOUCH_NOTE_ID = 101;
+	private static final int TEST_NOTE_ID = 102;
+	private int octiveOffset = -1;
+
+	Boolean isCurrentNoteFlat = false;
+	private NOTE_TYPE currentNoteType = NOTE_TYPE.NATURAL;
+
+	ArrayList<String> inputs = new ArrayList<String>();
+	ArrayAdapter<String> aa = null;
+
+
+	public NOTE_TYPE getNoteType( NOTES note )
+	{
+		if( ( note == NOTES.A_SHARP ) || ( note == NOTES.C_SHARP ) || ( note == NOTES.D_SHARP ) || ( note == NOTES.F_SHARP )
+				|| ( note == NOTES.G_SHARP ) || ( note == NOTES.B_SHARP ) || ( note == NOTES.E_SHARP ) )
+		{
+			return NOTE_TYPE.SHARP;
+		}
+		else if( ( note == NOTES.A_FLAT ) || ( note == NOTES.B_FLAT ) || ( note == NOTES.D_FLAT ) || ( note == NOTES.E_FLAT )
+				|| ( note == NOTES.G_FLAT ) || ( note == NOTES.C_FLAT ) || ( note == NOTES.F_FLAT ) )
+		{
+			return NOTE_TYPE.FLAT;
+		}
+		else
+		{
+			return NOTE_TYPE.NATURAL;
+		}
+	}
+
+
+	@Override
+	public void onCreate( Bundle savedInstanceState )
+	{
+		super.onCreate( savedInstanceState );
+
+		for(Iterator<NOTES> iterator = VALUES.iterator(); iterator.hasNext();)
+		{
+			record.put( iterator.next(), 0 );
+		}
+	}
+
+
+	@Override
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
+	{
+		View view = inflater.inflate( R.layout.staff_display, container, false );
+
+		a_btn = (Button) view.findViewById( R.id.btn_a );
+		b_btn = (Button) view.findViewById( R.id.btn_b );
+		c_btn = (Button) view.findViewById( R.id.btn_c );
+		d_btn = (Button) view.findViewById( R.id.btn_d );
+		e_btn = (Button) view.findViewById( R.id.btn_e );
+		f_btn = (Button) view.findViewById( R.id.btn_f );
+		g_btn = (Button) view.findViewById( R.id.btn_g );
+
+		c_sharp_btn = (Button) view.findViewById( R.id.btn_c_sharp );
+		d_sharp_btn = (Button) view.findViewById( R.id.btn_d_sharp );
+		f_sharp_btn = (Button) view.findViewById( R.id.btn_f_sharp );
+		g_sharp_btn = (Button) view.findViewById( R.id.btn_g_sharp );
+		a_sharp_btn = (Button) view.findViewById( R.id.btn_a_sharp );
+
+		lv_history = (ListView) view.findViewById( R.id.lv_history );
+		lv_history.setOnItemClickListener( new OnItemClickListener()
+		{
+			@Override
+			public void onItemClick( AdapterView<?> parent, View view, int position, long id )
+			{
+				// showNote( buttonToNote( R.id.btn_a ), ON_TOUCH_NOTE_ID, 0,
+				// NOTE_TYPE.NATURAL );
+			}
+		} );
+
+		aa = new ArrayAdapter<String>( getActivity(), android.R.layout.simple_list_item_1, inputs );
+
+		lv_history.setAdapter( aa );
+
+		staffLayout = (RelativeLayout) view.findViewById( R.id.staff_layout );
+
+		lv_history.setOnTouchListener( this );
+
+		a_btn.setOnTouchListener( this );
+		b_btn.setOnTouchListener( this );
+		c_btn.setOnTouchListener( this );
+		d_btn.setOnTouchListener( this );
+		e_btn.setOnTouchListener( this );
+		f_btn.setOnTouchListener( this );
+		g_btn.setOnTouchListener( this );
+
+		c_sharp_btn.setOnTouchListener( this );
+		d_sharp_btn.setOnTouchListener( this );
+		f_sharp_btn.setOnTouchListener( this );
+		g_sharp_btn.setOnTouchListener( this );
+		a_sharp_btn.setOnTouchListener( this );
+
+		setTestNote();
+
+		return view;
+	}
+
+
+	private void setTestNote()
+	{
+		NOTES nextNote = null;
+		do
+		{
+			nextNote = getRandomNote();
+
+			if( ( (Main) getActivity() ).testWithSharps() == false )
+			{
+				if( getNoteType( nextNote ) == NOTE_TYPE.SHARP )
+				{
+					nextNote = currentNote;
+				}
+			}
+			if( ( (Main) getActivity() ).testWithFlats() == false )
+			{
+				if( getNoteType( nextNote ) == NOTE_TYPE.FLAT )
+				{
+					nextNote = currentNote;
+				}
+			}
+
+		} while (currentNote == nextNote);
+
+		currentNote = nextNote;
+		currentNoteType = getNoteType( currentNote );
+		octiveOffset = rand.nextInt( 4 );
+
+		showNote( currentNote, TEST_NOTE_ID, 0, currentNoteType );
+	}
+
+
+	private NOTES getRandomNote()
+	{
+		return VALUES.get( rand.nextInt( size ) );
+	}
+
+
+	public NOTES buttonToNote( int button )
+	{
+		if( button == R.id.btn_c )
+		{
+			// if( currentNoteType == NOTE_TYPE.FLAT )
+			// {
+			// return NOTES.B_NATURAL;
+			// }
+			return NOTES.C_NATURAL;
+		}
+		else if( button == R.id.btn_c_sharp )
+		{
+			return ( currentNoteType == NOTE_TYPE.SHARP ) ? NOTES.C_SHARP : NOTES.D_FLAT;
+		}
+		else if( button == R.id.btn_d )
+		{
+			return NOTES.D_NATURAL;
+		}
+		else if( button == R.id.btn_d_sharp )
+		{
+			return ( currentNoteType == NOTE_TYPE.SHARP ) ? NOTES.D_SHARP : NOTES.E_FLAT;
+		}
+		else if( button == R.id.btn_e )
+		{
+			// if( currentNoteType == NOTE_TYPE.SHARP )
+			// {
+			// return NOTES.F_NATURAL;
+			// }
+
+			return NOTES.E_NATURAL;
+		}
+		else if( button == R.id.btn_f )
+		{
+			// if( currentNoteType == NOTE_TYPE.FLAT )
+			// {
+			// return NOTES.E_NATURAL;
+			// }
+
+			return NOTES.F_NATURAL;
+		}
+		else if( button == R.id.btn_f_sharp )
+		{
+			return ( currentNoteType == NOTE_TYPE.SHARP ) ? NOTES.F_SHARP : NOTES.G_FLAT;
+		}
+		else if( button == R.id.btn_g )
+		{
+			return NOTES.G_NATURAL;
+		}
+		else if( button == R.id.btn_g_sharp )
+		{
+			return ( currentNoteType == NOTE_TYPE.SHARP ) ? NOTES.G_SHARP : NOTES.A_FLAT;
+		}
+		else if( button == R.id.btn_a )
+		{
+			return NOTES.A_NATURAL;
+		}
+		else if( button == R.id.btn_a_sharp )
+		{
+			return ( currentNoteType == NOTE_TYPE.SHARP ) ? NOTES.A_SHARP : NOTES.B_FLAT;
+		}
+		else if( button == R.id.btn_b )
+		{
+			// if( currentNoteType == NOTE_TYPE.SHARP )
+			// {
+			// return NOTES.C_NATURAL;
+			// }
+
+			return NOTES.B_NATURAL;
+		}
+
+		return null;
+	}
+
+
+	@Override
+	public boolean onTouch( View v, MotionEvent event )
+	{
+		int isCorrect = -1;
+		int noteID = -1;
+		NOTE_TYPE showType = null;
+
+		if( v.getId() != R.id.lv_history )
+		{
+			isCorrect = ( buttonToNote( v.getId() ) == currentNote ) ? 1 : 2;
+
+			Boolean isSharpPressed = ( ( (View) v.getParent() ).getId() == R.id.sharp_buttons );
+
+			showType = ( isSharpPressed ) ? currentNoteType : NOTE_TYPE.NATURAL;
+
+			noteID = v.getId();
+
+			Log.d( Main.APP_TAG, String.valueOf( currentNote ) );
+			Log.d( Main.APP_TAG, String.valueOf( currentNoteType ) );
+
+			if( currentNote == NOTES.C_FLAT )
+			{
+				if( noteID == R.id.btn_b )
+				{
+					isCorrect = 1;
+					noteID = R.id.btn_c;
+					showType = NOTE_TYPE.FLAT;
+					// octiveOffset--;
+
+				}
+				else
+				{
+					isCorrect = 2;
+				}
+			}
+			else if( currentNote == NOTES.B_SHARP )
+			{
+				if( noteID == R.id.btn_c )
+				{
+					isCorrect = 1;
+					noteID = R.id.btn_b;
+					showType = NOTE_TYPE.SHARP;
+				}
+				else
+				{
+					isCorrect = 2;
+				}
+
+			}
+			else if( currentNote == NOTES.E_SHARP )
+			{
+				if( noteID == R.id.btn_f )
+				{
+					isCorrect = 1;
+					noteID = R.id.btn_e;
+					showType = NOTE_TYPE.SHARP;
+				}
+				else
+				{
+					isCorrect = 2;
+				}
+			}
+			else if( currentNote == NOTES.F_FLAT )
+			{
+				if( noteID == R.id.btn_e )
+				{
+					isCorrect = 1;
+					noteID = R.id.btn_f;
+					showType = NOTE_TYPE.FLAT;
+				}
+				else
+				{
+					isCorrect = 2;
+				}
+			}
+		}
+		else
+		{
+			showHistorical( event.getAction() );
+			return true;
+		}
+
+		switch (event.getAction())
+		{
+		case MotionEvent.ACTION_DOWN:
+
+			showNote( buttonToNote( noteID ), ON_TOUCH_NOTE_ID, isCorrect, showType );
+			break;
+
+		case MotionEvent.ACTION_UP:
+
+			if( isCorrect == 1 )
+			{
+				staffLayout.removeView( staffLayout.findViewById( TEST_NOTE_ID ) );
+
+				setTestNote();
+			}
+			else if( isCorrect == 2 )
+			{
+				record.put( currentNote, record.get( currentNote ) + 1 );
+
+				inputs.add( String.valueOf( currentNote ) + "/ octive = " + Integer.valueOf( octiveOffset ) );
+			}
+
+			aa.notifyDataSetChanged();
+
+			staffLayout.removeView( staffLayout.findViewById( ON_TOUCH_NOTE_ID ) );
+
+			break;
+
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+
+	private void showHistorical( int action )
+	{
+		int isCorrect = 1;
+		int noteID = R.id.btn_a;
+		NOTE_TYPE showType = NOTE_TYPE.NATURAL;
+
+		switch (action)
+		{
+		case MotionEvent.ACTION_DOWN:
+
+			showNote( buttonToNote( noteID ), ON_TOUCH_NOTE_ID, isCorrect, showType );
+			break;
+
+		case MotionEvent.ACTION_UP:
+
+			staffLayout.removeView( staffLayout.findViewById( ON_TOUCH_NOTE_ID ) );
+
+			break;
+
+		default:
+			break;
+		}
+
+	}
+
+
+	private void showNote( NOTES note, int noteID, int isCorrect, NOTE_TYPE noteType )
+	{
+		ImageView crotchet = new ImageView( getActivity() );
+
+		crotchet.setImageResource( getNoteResource( isCorrect, noteType ) );
+
+		float[] positions = getNotePosition( note );
+
+		crotchet.setX( ( isCorrect == 0 ) ? positions[0] : positions[0] + 100 );
+		crotchet.setY( positions[1] );
+		crotchet.setLayoutParams( new LayoutParams( R.integer.width_note_img, R.integer.height_note_img ) );
+		crotchet.setId( noteID );
+
+		staffLayout.addView( crotchet );
+
+	}
+
+
+	private int getNoteResource( int isCorrect, NOTE_TYPE type )
+	{
+		int resourceID = 0;
+
+		if( type == NOTE_TYPE.NATURAL )
+		{
+			if( isCorrect == 0 )
+			{
+				resourceID = R.drawable.up_crotchet;
+			}
+			else if( isCorrect == 1 )
+			{
+				resourceID = R.drawable.correct_up_crotchet;
+			}
+			else if( isCorrect == 2 )
+			{
+				resourceID = R.drawable.incorrect_up_crotchet;
+			}
+		}
+
+		if( type == NOTE_TYPE.SHARP )
+		{
+			if( isCorrect == 0 )
+			{
+				resourceID = R.drawable.up_crotchet_sharp;
+			}
+			else if( isCorrect == 1 )
+			{
+				resourceID = R.drawable.correct_up_crotchet_sharp;
+			}
+			else if( isCorrect == 2 )
+			{
+				resourceID = R.drawable.incorrect_up_crotchet_sharp;
+			}
+		}
+
+		if( type == NOTE_TYPE.FLAT )
+		{
+			if( isCorrect == 0 )
+			{
+				resourceID = R.drawable.up_crotchet_flat;
+			}
+			else if( isCorrect == 1 )
+			{
+				resourceID = R.drawable.correct_up_crotchet_flat;
+			}
+			else if( isCorrect == 2 )
+			{
+				resourceID = R.drawable.incorrect_up_crotchet_flat;
+			}
+		}
+
+		return resourceID;
+	}
+
+
+	private float[] getNotePosition( NOTES noteType )
+	{
+		float[] positions = new float[2];
+
+		positions[1] = 110F; // y, was 410F
+
+		positions[0] = R.integer.x_note_img;// x, was 545F
+
+		int offset = 0;
+
+		float x = 0;
+		float y = 0;
+
+		switch (noteType)
+		{
+		case C_NATURAL:
+		case C_SHARP:
+		case C_FLAT:
+			offset = 0;
+			break;
+		case D_NATURAL:
+		case D_SHARP:
+		case D_FLAT:
+			offset = 1;
+			break;
+		case E_NATURAL:
+		case E_FLAT:
+		case E_SHARP:
+			offset = 2;
+			break;
+		case F_NATURAL:
+		case F_SHARP:
+		case F_FLAT:
+			offset = 3;
+			break;
+		case G_NATURAL:
+		case G_SHARP:
+		case G_FLAT:
+			offset = 4;
+			break;
+		case A_NATURAL:
+		case A_SHARP:
+		case A_FLAT:
+			offset = 5;
+			break;
+		case B_NATURAL:
+		case B_FLAT:
+		case B_SHARP:
+			offset = 6;
+			break;
+
+		default:
+			break;
+		}
+
+		// x = offset * 20F;
+		y = offset * R.integer.y_offset_note_img; // was -15
+
+		if( octiveOffset > 0 )
+		{
+			y += ( octiveOffset * -R.integer.y_octive_offset_note_img ); // was -113
+		}
+
+		positions[0] += x;
+		positions[1] += y;
+
+		return positions;
+	}
+
+
+	@Override
+	public void onClick( View v )
+	{
+		Log.d( Main.APP_TAG, "in the onclick" );
+
+	}
+
+
+	// ---------------
+
+	public void addTrebleClef()
+	{
+		RelativeLayout.LayoutParams imParams = new RelativeLayout.LayoutParams( 150, 210 );
+		ImageView clef = new ImageView( getActivity() );
+
+		clef.setImageResource( R.drawable.treble_clef );
+		clef.setX( -20 );
+		clef.setY( -295 );
+		clef.setId( 1 );
+
+		staffLayout.addView( clef, imParams );
+
+	}
+
+
+	public void addBassClef()
+	{
+		RelativeLayout.LayoutParams imParams = new RelativeLayout.LayoutParams( 100, 105 );
+		ImageView clef = new ImageView( getActivity() );
+
+		clef.setImageResource( R.drawable.bass_clef );
+		clef.setX( 0 );
+		clef.setY( -260 );
+		clef.setId( 1 );
+
+		staffLayout.addView( clef, imParams );
+
+	}
+
+}

@@ -1,0 +1,43 @@
+
+make widget
+move load words to new thread 
+move delete words to new thread
+ability to update word db with out overwriting the progress
+on layout change all words disappear
+to different layouts for different screens / orientations 
+show msg when actionbar changed and no words listed
+fix layout of new test dialog
+update on finish of test to show results
+result list updates randomly
+leave in test frag and error when returing
+add search in action bar
+some form of letter selector for view + test
+some words show are wrong when right
+speak icon needs bettter asset
+a-z scroll
+
+
+done
+add fast scroll
+updare actionbar options when moving from list to test
+test as action bar icon and not overflow
+
+new tet dialog on phone is not right
+add padding to result list, left and right
+actionbar spinner disappears after test
+if group of words for test is less than the num or words for test change test size
+change to fragments, will need to do this before drawer
+show loading of words
+add word of the day at top
+in test dont use words that have already been tested
+change speak icon, improved
+update the counts when you go back from a test, on update maybe call notifyALl
+update the green colour to be darker
+read fragments
+read loaders
+on load if words already exist then dont load them
+new test doesnt work as extra "," in sql
+extract strings from new test dialog
+change edittext test to spinner
+fix colour of action bar text colour
+test is one less then selected

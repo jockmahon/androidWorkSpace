@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+    <item
+        android:id="@+id/mi_include_sharp"
+        android:checkable="true"
+        android:checked="true"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/include_sharps"/>
+    <item
+        android:id="@+id/mi_include_flat"
+        android:checkable="true"
+        android:checked="true"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/include_flats"/>
+
+</menu>

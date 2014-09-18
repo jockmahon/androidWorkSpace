@@ -1,0 +1,49 @@
+create assets for buttons
+sharp buttons style
+on change of orientation menu options are reset
+need phone layout
+
+
+on press of wrong note in list show it
+
+maybe
+set up scrolling test of notes comeing in from the right and you have to press the note
+withing a given reagon
+
+layout/resouce files on new nexus are wrong
+
+
+guess the keysignate , by pic, by notes
+guess the note, all octives
+guess the triad
+work on all screen
+scrolling note test
+log all notes and show stats on correct / incorrect
+
+
+
+
+done
+if test note is b~ and you press wrong more than once the octive is get ++ too many times
+wrong note is displayed it a b#, to get correct you need to press c which shows
+include option to include flats in test010
+maybe include sharp notes in the NOTES enum
+include flats
+fix keyboard layout in landscape
+include option to un/include sharp
+e sharp and b sharp cause problems
+landscape not working notes in the wrong place
+move onTOuch note to the right
+press natual for sharp works
+natural is correct when should be sharp
+flats not appearing
+get assets for flats
+press c for c# evaluates as correct
+do correct / incorrect sharp assets
+on press of sharp nothing happens
+get random test note to include sharps
+sharp note letter wrong
+get note graphics
+on button click show note
+display staff on screen
+get activity and fragments working

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="width_note_btn">84dp</dimen>
+    <dimen name="width_sharp_note_btn">64dp</dimen>
+    
+    <dimen name="height_note_btn">300dp</dimen>
+    <dimen name="height_sharp_note_btn">170dp</dimen>
+	<dimen name="height_staff_image">280dp</dimen>    
+
+    <dimen name="padding_sharp_notes">52dp</dimen>
+
+    <integer name="width_note_img">150</integer>
+    <integer name="height_note_img">150</integer>
+
+    <integer name="y_note_img">410</integer>
+    <integer name="y_offset_note_img">-15</integer>
+    <integer name="y_octive_offset_note_img">-113</integer>
+    <integer name="x_note_img">470</integer>
+
+    
+</resources>
